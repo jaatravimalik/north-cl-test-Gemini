@@ -32,6 +32,9 @@ export class AuthService {
       name: dto.name,
       email: dto.email,
       password: hashedPassword,
+      phone: dto.phone,
+      city: dto.city,
+      state: dto.state,
     });
     await this.usersRepository.save(user);
 

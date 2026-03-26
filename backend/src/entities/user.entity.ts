@@ -33,6 +33,12 @@ export class User {
   @Column({ nullable: true })
   location: string;
 
+  @Column({ nullable: true })
+  city: string;
+
+  @Column({ nullable: true })
+  state: string;
+
   @Column({ type: 'text', nullable: true })
   about: string;
 
