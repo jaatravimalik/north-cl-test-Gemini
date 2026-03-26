@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from '../entities/user.entity';
@@ -14,7 +14,7 @@ export class UsersService {
   async findById(id: string) {
     const user = await this.usersRepository.findOne({
       where: { id },
-      relations: ['experiences', 'educations'],
+      relations: ['experiences', 'educations', 'followers', 'following'],
     });
     if (!user) {
       throw new NotFoundException('User not found');
@@ -35,5 +35,42 @@ export class UsersService {
   async updateCover(userId: string, filename: string) {
     await this.usersRepository.update(userId, { cover: `/uploads/${filename}` });
     return this.findById(userId);
+  }
+
+  async followUser(currentUserId: string, targetUserId: string) {
+    if (currentUserId === targetUserId) {
+      throw new ForbiddenException("Cannot follow yourself");
+    }
+    
+    const currentUser = await this.usersRepository.findOne({ 
+      where: { id: currentUserId }, 
+      relations: ['following'] 
+    });
+    const targetUser = await this.usersRepository.findOne({ 
+      where: { id: targetUserId } 
+    });
+    
+    if (!targetUser || !currentUser) {
+      throw new NotFoundException('User not found');
+    }
+    
+    if (!currentUser.following.find(u => u.id === targetUserId)) {
+      currentUser.following.push(targetUser);
+      await this.usersRepository.save(currentUser);
+    }
+    return { success: true };
+  }
+
+  async unfollowUser(currentUserId: string, targetUserId: string) {
+    const currentUser = await this.usersRepository.findOne({ 
+      where: { id: currentUserId }, 
+      relations: ['following'] 
+    });
+    
+    if (!currentUser) throw new NotFoundException('User not found');
+    
+    currentUser.following = currentUser.following.filter(u => u.id !== targetUserId);
+    await this.usersRepository.save(currentUser);
+    return { success: true };
   }
 }

@@ -9,6 +9,7 @@ import {
   UseInterceptors,
   UploadedFile,
   Post,
+  Delete,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
@@ -61,5 +62,17 @@ export class UsersController {
   @UseInterceptors(FileInterceptor('cover', multerOptions))
   uploadCover(@Request() req, @UploadedFile() file: Express.Multer.File) {
     return this.usersService.updateCover(req.user.id, file.filename);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post(':id/follow')
+  followUser(@Request() req, @Param('id') targetId: string) {
+    return this.usersService.followUser(req.user.id, targetId);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Delete(':id/follow')
+  unfollowUser(@Request() req, @Param('id') targetId: string) {
+    return this.usersService.unfollowUser(req.user.id, targetId);
   }
 }

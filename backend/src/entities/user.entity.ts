@@ -4,6 +4,8 @@ import {
   Column,
   CreateDateColumn,
   OneToMany,
+  ManyToMany,
+  JoinTable,
 } from 'typeorm';
 import { Experience } from './experience.entity';
 import { Education } from './education.entity';
@@ -80,4 +82,15 @@ export class User {
 
   @OneToMany(() => Rating, (rating) => rating.user)
   ratings: Rating[];
+
+  @ManyToMany(() => User, (user) => user.following)
+  @JoinTable({
+    name: 'user_followers',
+    joinColumn: { name: 'followingId', referencedColumnName: 'id' },
+    inverseJoinColumn: { name: 'followerId', referencedColumnName: 'id' },
+  })
+  followers: User[];
+
+  @ManyToMany(() => User, (user) => user.followers)
+  following: User[];
 }

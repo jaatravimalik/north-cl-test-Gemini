@@ -9,6 +9,7 @@ export default function Profile() {
   const { user: currentUser } = useAuth();
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [followLoading, setFollowLoading] = useState(false);
 
   useEffect(() => {
     API.get(`/users/${userId}`)
@@ -21,6 +22,39 @@ export default function Profile() {
   if (!profile) return <div className="empty-state card"><h3>Profile not found</h3></div>;
 
   const isOwner = currentUser?.id === profile.id;
+  const isFollowing = profile.followers?.some((f) => f.id === currentUser?.id);
+
+  const handleFollow = async () => {
+    if (!currentUser) return;
+    setFollowLoading(true);
+    try {
+      await API.post(`/users/${profile.id}/follow`);
+      setProfile((prev) => ({
+        ...prev,
+        followers: [...(prev.followers || []), currentUser],
+      }));
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setFollowLoading(false);
+    }
+  };
+
+  const handleUnfollow = async () => {
+    if (!currentUser) return;
+    setFollowLoading(true);
+    try {
+      await API.delete(`/users/${profile.id}/follow`);
+      setProfile((prev) => ({
+        ...prev,
+        followers: (prev.followers || []).filter((f) => f.id !== currentUser.id),
+      }));
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setFollowLoading(false);
+    }
+  };
 
   return (
     <div className="page profile-page">
@@ -40,13 +74,25 @@ export default function Profile() {
                   {profile.location && <span className="mr-2">📍 {profile.location}</span>}
                   {profile.website && <span>🔗 <a href={profile.website} target="_blank" rel="noreferrer" style={{color: 'white', textDecoration: 'underline'}}>{profile.website.replace('https://', '')}</a></span>}
                 </div>
+                <div className="profile-stats mt-2 flex gap-3 text-sm">
+                  <span><strong>{profile.followers?.length || 0}</strong> Followers</span>
+                  <span><strong>{profile.following?.length || 0}</strong> Following</span>
+                </div>
               </div>
             </div>
-            {isOwner && (
-              <div className="profile-actions">
+            <div className="profile-actions">
+              {isOwner ? (
                 <Link to="/profile/edit" className="btn btn-secondary btn-sm">Edit Profile</Link>
-              </div>
-            )}
+              ) : currentUser ? (
+                <button
+                  className={`btn ${isFollowing ? 'btn-outline' : 'btn-primary'} btn-sm`}
+                  onClick={isFollowing ? handleUnfollow : handleFollow}
+                  disabled={followLoading}
+                >
+                  {isFollowing ? 'Unfollow' : 'Follow'}
+                </button>
+              ) : null}
+            </div>
           </div>
         </div>
 

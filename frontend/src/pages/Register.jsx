@@ -37,7 +37,7 @@ export default function Register() {
     try {
       const fullPhone = `${form.countryCode}${form.phone}`;
       await register(form.name, form.email, form.password, fullPhone, form.city, form.state);
-      navigate('/feed');
+      navigate('/onboarding');
     } catch (err) {
       setError(err.response?.data?.message || 'Registration failed. Please try again.');
     } finally {

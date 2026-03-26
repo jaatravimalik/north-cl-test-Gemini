@@ -10,6 +10,7 @@ import EditProfile from './pages/EditProfile';
 import BusinessDirectory from './pages/BusinessDirectory';
 import BusinessDetail from './pages/BusinessDetail';
 import CreateBusiness from './pages/CreateBusiness';
+import Onboarding from './pages/Onboarding';
 
 export default function App() {
   return (
@@ -19,6 +20,9 @@ export default function App() {
         <Route path="/" element={<Landing />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        
+        {/* Protected Routes */}
+        <Route path="/onboarding" element={<PrivateRoute><Onboarding /></PrivateRoute>} />
         <Route path="/feed" element={<PrivateRoute><Feed /></PrivateRoute>} />
         <Route path="/profile/:userId" element={<Profile />} />
         <Route path="/profile/edit" element={<PrivateRoute><EditProfile /></PrivateRoute>} />
