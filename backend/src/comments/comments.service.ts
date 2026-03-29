@@ -1,29 +1,38 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Comment } from '../entities/comment.entity';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { Comment, CommentDocument } from '../schemas/comment.schema';
 
 @Injectable()
 export class CommentsService {
   constructor(
-    @InjectRepository(Comment)
-    private commentsRepository: Repository<Comment>,
+    @InjectModel(Comment.name) private commentModel: Model<CommentDocument>,
   ) {}
 
   async findByPost(postId: string) {
-    return this.commentsRepository.find({
-      where: { postId },
-      relations: ['user'],
-      order: { createdAt: 'ASC' },
+    const comments = await this.commentModel.find({ postId: postId as any }).populate('userId').sort({ createdAt: 1 }).lean();
+    return comments.map((c: any) => {
+      const mappedUser = c.userId ? { ...c.userId, id: c.userId._id?.toString() } : null;
+      return {
+        ...c,
+        id: c._id.toString(),
+        user: mappedUser,
+        userId: mappedUser?.id,
+      };
     });
   }
 
   async create(userId: string, postId: string, content: string) {
-    const comment = this.commentsRepository.create({ userId, postId, content });
-    const saved = await this.commentsRepository.save(comment);
-    return this.commentsRepository.findOne({
-      where: { id: saved.id },
-      relations: ['user'],
+    const comment = new this.commentModel({ userId, postId, content });
+    const saved = await comment.save();
+    return this.commentModel.findById(saved._id).populate('userId').lean().then((c: any) => {
+      const mappedUser = c.userId ? { ...c.userId, id: c.userId._id?.toString() } : null;
+      return {
+        ...c,
+        id: c._id.toString(),
+        user: mappedUser,
+        userId: mappedUser?.id,
+      };
     });
   }
 }

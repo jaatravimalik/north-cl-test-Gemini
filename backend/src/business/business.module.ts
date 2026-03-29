@@ -1,11 +1,17 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { MongooseModule } from '@nestjs/mongoose';
 import { BusinessService } from './business.service';
 import { BusinessController } from './business.controller';
-import { Business } from '../entities/business.entity';
+import { Business, BusinessSchema } from '../schemas/business.schema';
+import { Rating, RatingSchema } from '../schemas/rating.schema';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Business])],
+  imports: [
+    MongooseModule.forFeature([
+      { name: Business.name, schema: BusinessSchema },
+      { name: Rating.name, schema: RatingSchema },
+    ]),
+  ],
   controllers: [BusinessController],
   providers: [BusinessService],
 })

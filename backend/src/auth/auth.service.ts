@@ -1,34 +1,27 @@
-import {
-  Injectable,
-  ConflictException,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable, ConflictException, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
 import * as bcrypt from 'bcrypt';
-import { User } from '../entities/user.entity';
+import { User, UserDocument } from '../schemas/user.schema';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 
 @Injectable()
 export class AuthService {
   constructor(
-    @InjectRepository(User)
-    private usersRepository: Repository<User>,
+    @InjectModel(User.name) private userModel: Model<UserDocument>,
     private jwtService: JwtService,
   ) {}
 
   async register(dto: RegisterDto) {
-    const existing = await this.usersRepository.findOne({
-      where: { email: dto.email },
-    });
+    const existing = await this.userModel.findOne({ email: dto.email });
     if (existing) {
       throw new ConflictException('Email already registered');
     }
 
     const hashedPassword = await bcrypt.hash(dto.password, 10);
-    const user = this.usersRepository.create({
+    const user = new this.userModel({
       name: dto.name,
       email: dto.email,
       password: hashedPassword,
@@ -36,20 +29,17 @@ export class AuthService {
       city: dto.city,
       state: dto.state,
     });
-    await this.usersRepository.save(user);
+    const savedUser = await user.save();
 
-    const tokens = this.generateTokens(user);
+    const tokens = this.generateTokens(savedUser);
     return {
-      user: this.sanitizeUser(user),
+      user: this.sanitizeUser(savedUser.toObject({ virtuals: true })),
       ...tokens,
     };
   }
 
   async login(dto: LoginDto) {
-    const user = await this.usersRepository.findOne({
-      where: { email: dto.email },
-      select: ['id', 'name', 'email', 'password', 'avatar', 'headline'],
-    });
+    const user = await this.userModel.findOne({ email: dto.email }).select('+password');
     if (!user) {
       throw new UnauthorizedException('Invalid credentials');
     }
@@ -61,7 +51,7 @@ export class AuthService {
 
     const tokens = this.generateTokens(user);
     return {
-      user: this.sanitizeUser(user),
+      user: this.sanitizeUser(user.toObject({ virtuals: true })),
       ...tokens,
     };
   }
@@ -71,15 +61,13 @@ export class AuthService {
       const payload = this.jwtService.verify(refreshToken, {
         secret: process.env.JWT_REFRESH_SECRET || 'defaultRefreshSecret',
       });
-      const user = await this.usersRepository.findOne({
-        where: { id: payload.sub },
-      });
+      const user = await this.userModel.findById(payload.sub);
       if (!user) {
         throw new UnauthorizedException();
       }
       const tokens = this.generateTokens(user);
       return {
-        user: this.sanitizeUser(user),
+        user: this.sanitizeUser(user.toObject({ virtuals: true })),
         ...tokens,
       };
     } catch {
@@ -87,8 +75,8 @@ export class AuthService {
     }
   }
 
-  private generateTokens(user: User) {
-    const payload = { sub: user.id, email: user.email };
+  private generateTokens(user: any) {
+    const payload = { sub: user.id || user._id.toString(), email: user.email };
     return {
       accessToken: this.jwtService.sign(payload, {
         secret: process.env.JWT_SECRET || 'defaultSecret',
@@ -101,8 +89,9 @@ export class AuthService {
     };
   }
 
-  private sanitizeUser(user: User) {
-    const { password, ...result } = user;
+  private sanitizeUser(user: any) {
+    const { password, _id, __v, ...result } = user;
+    if (!result.id && _id) result.id = _id.toString();
     return result;
   }
 }

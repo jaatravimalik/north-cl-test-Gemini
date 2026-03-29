@@ -1,53 +1,62 @@
-import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Rating } from '../entities/rating.entity';
+import { Injectable, NotFoundException, ForbiddenException, BadRequestException } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model, Types } from 'mongoose';
+import { Rating, RatingDocument } from '../schemas/rating.schema';
 import { CreateRatingDto } from './dto/create-rating.dto';
 
 @Injectable()
 export class RatingsService {
   constructor(
-    @InjectRepository(Rating)
-    private ratingsRepository: Repository<Rating>,
+    @InjectModel(Rating.name) private ratingModel: Model<RatingDocument>,
   ) {}
 
   async findByBusiness(businessId: string) {
-    return this.ratingsRepository.find({
-      where: { businessId },
-      relations: ['user'],
-      order: { createdAt: 'DESC' },
+    const ratings = await this.ratingModel.find({ businessId: businessId as any }).populate('userId').sort({ createdAt: -1 }).lean();
+    return ratings.map((r: any) => {
+      const mappedUser = r.userId ? { ...r.userId, id: r.userId._id?.toString() } : null;
+      return {
+        ...r,
+        id: r._id.toString(),
+        user: mappedUser,
+        userId: mappedUser?.id,
+      };
     });
   }
 
   async createOrUpdate(userId: string, businessId: string, dto: CreateRatingDto) {
-    let rating = await this.ratingsRepository.findOne({
-      where: { userId, businessId },
-    });
+    let rating = await this.ratingModel.findOne({ userId: userId as any, businessId: businessId as any });
 
     if (rating) {
       rating.stars = dto.stars;
-      rating.review = dto.review || rating.review;
+      if (dto.review) rating.review = dto.review;
+      await rating.save();
     } else {
-      rating = this.ratingsRepository.create({
+      rating = new this.ratingModel({
         userId,
         businessId,
         stars: dto.stars,
         review: dto.review,
       });
+      await rating.save();
     }
 
-    const saved = await this.ratingsRepository.save(rating);
-    return this.ratingsRepository.findOne({
-      where: { id: saved.id },
-      relations: ['user'],
+    return this.ratingModel.findById(rating._id).populate('userId').lean().then((r: any) => {
+      const mappedUser = r.userId ? { ...r.userId, id: r.userId._id?.toString() } : null;
+      return {
+        ...r,
+        id: r._id.toString(),
+        user: mappedUser,
+        userId: mappedUser?.id,
+      };
     });
   }
 
   async remove(userId: string, id: string) {
-    const rating = await this.ratingsRepository.findOne({ where: { id } });
+    if (!Types.ObjectId.isValid(id)) throw new BadRequestException('Invalid ID');
+    const rating = await this.ratingModel.findById(id);
     if (!rating) throw new NotFoundException('Rating not found');
-    if (rating.userId !== userId) throw new ForbiddenException();
-    await this.ratingsRepository.remove(rating);
+    if (rating.userId.toString() !== userId) throw new ForbiddenException();
+    await this.ratingModel.findByIdAndDelete(id);
     return { deleted: true };
   }
 }
