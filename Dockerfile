@@ -1,24 +1,24 @@
-# Stage 1: Build the Application
+# Stage 1: Build the Backend Application
 FROM node:18 AS build
 
 # Set the working directory inside the container
 WORKDIR /usr/src/app
 
-# Since Fly.io's GitHub integration builds from the root folder of your monorepo, 
-# we must prefix everything with "backend/" so it can find the files!
+# Since this Dockerfile is at the root of the project,
+# we copy the backend package files into the current working directory of the container.
 COPY backend/package*.json ./
 
 # Install dependencies safely
 RUN npm install
 
-# Copy the rest of the backend source code
+# Copy all the backend source code into the container
 COPY backend/ ./
 
 # Build the NestJS app (Compiles TypeScript files into the /dist folder)
 RUN npm run build
 
 # Stage 2: Create the Final Production Image
-FROM node:18
+FROM node:18-alpine
 
 # Set the working directory
 WORKDIR /usr/src/app
