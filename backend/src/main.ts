@@ -18,7 +18,11 @@ async function bootstrap() {
   );
 
   app.enableCors({
-    origin: ['http://localhost:5173', 'http://localhost:3000'],
+    origin: [
+      'http://localhost:5173', 
+      'http://localhost:3000', 
+      process.env.FRONTEND_URL || 'https://north-cl-test-gemini-nsnd.vercel.app'
+    ],
     credentials: true,
   });
 
@@ -26,7 +30,7 @@ async function bootstrap() {
   app.use('/uploads', express.static(join(__dirname, '..', 'uploads')));
 
   const port = process.env.PORT || 3000;
-  await app.listen(port);
+  await app.listen(port, '0.0.0.0');
   console.log(`🚀 NorthIndia Connect API running on http://localhost:${port}`);
 }
 bootstrap();
