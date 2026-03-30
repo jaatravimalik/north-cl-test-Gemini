@@ -1,25 +1,23 @@
 # Stage 1: Build the Application
-# We use node:18 as the base for building and installing dependencies.
 FROM node:18 AS build
 
 # Set the working directory inside the container
 WORKDIR /usr/src/app
 
-# Copy package.json and package-lock.json first to leverage Docker caching.
-# If these files don't change, subsequent builds can skip 'npm install'.
-COPY package*.json ./
+# Since Fly.io's GitHub integration builds from the root folder of your monorepo, 
+# we must prefix everything with "backend/" so it can find the files!
+COPY backend/package*.json ./
 
-# Install dependencies
+# Install dependencies safely
 RUN npm install
 
-# Copy the rest of the application source code
-COPY . .
+# Copy the rest of the backend source code
+COPY backend/ ./
 
 # Build the NestJS app (Compiles TypeScript files into the /dist folder)
 RUN npm run build
 
 # Stage 2: Create the Final Production Image
-# We use node:18 as the runtime image with all the necessary tools.
 FROM node:18
 
 # Set the working directory
@@ -30,7 +28,7 @@ COPY --from=build /usr/src/app/node_modules ./node_modules
 COPY --from=build /usr/src/app/package*.json ./
 COPY --from=build /usr/src/app/dist ./dist
 
-# Create the uploads folder (since your app allows image uploading) and give permissions
+# Create the uploads folder (for image uploading) and give permissions
 RUN mkdir uploads && chown -R node:node uploads
 
 # Expose the port your app runs on
