@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import API from '../api/api';
 import { useAuth } from '../context/AuthContext';
+import ImageCropperModal from '../components/ImageCropperModal';
 
 export default function EditProfile() {
   const { user, updateUser } = useAuth();
@@ -11,6 +12,7 @@ export default function EditProfile() {
   });
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
+  const [cropModalInfo, setCropModalInfo] = useState({ isOpen: false, src: null, type: null });
 
   useEffect(() => {
     if (user) {
@@ -48,32 +50,46 @@ export default function EditProfile() {
     }
   };
 
-  const handleAvatarUpload = async (e) => {
+  const handleFileSelect = (e, type) => {
     const file = e.target.files[0];
     if (!file) return;
+
+    if (file.size > 500 * 1024) {
+      setMessage({ type: 'error', text: 'Image cannot exceed 500KB limit.' });
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.addEventListener('load', () => {
+      setCropModalInfo({ isOpen: true, src: reader.result?.toString(), type });
+    });
+    reader.readAsDataURL(file);
+    e.target.value = '';
+  };
+
+  const handleCropComplete = async (croppedBlob) => {
+    const { type } = cropModalInfo;
+    setCropModalInfo({ isOpen: false, src: null, type: null });
+
+    if (croppedBlob.size > 500 * 1024) {
+      setMessage({ type: 'error', text: 'Cropped image exceeds 500KB limit.' });
+      return;
+    }
+
     const formData = new FormData();
-    formData.append('avatar', file);
+    formData.append(type, croppedBlob, `${type}.jpg`);
+
     try {
-      const { data } = await API.post('/users/me/avatar', formData);
+      const { data } = await API.post(`/users/me/${type}`, formData);
       updateUser(data);
-      setMessage({ type: 'success', text: 'Avatar updated!' });
+      setMessage({ type: 'success', text: `${type === 'avatar' ? 'Avatar' : 'Cover photo'} updated!` });
     } catch {
-      setMessage({ type: 'error', text: 'Failed to upload avatar.' });
+      setMessage({ type: 'error', text: `Failed to upload ${type}.` });
     }
   };
 
-  const handleCoverUpload = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    const formData = new FormData();
-    formData.append('cover', file);
-    try {
-      const { data } = await API.post('/users/me/cover', formData);
-      updateUser(data);
-      setMessage({ type: 'success', text: 'Cover photo updated!' });
-    } catch {
-      setMessage({ type: 'error', text: 'Failed to upload cover.' });
-    }
+  const closeCropModal = () => {
+    setCropModalInfo({ isOpen: false, src: null, type: null });
   };
 
   return (
@@ -100,7 +116,7 @@ export default function EditProfile() {
                   )}
                   <label className="btn btn-secondary btn-sm" style={{ cursor: 'pointer' }}>
                     Upload Avatar
-                    <input type="file" accept="image/*" onChange={handleAvatarUpload} style={{ display: 'none' }} />
+                    <input type="file" accept="image/*" onChange={(e) => handleFileSelect(e, 'avatar')} style={{ display: 'none' }} />
                   </label>
                 </div>
               </div>
@@ -113,7 +129,7 @@ export default function EditProfile() {
                   </div>
                   <label className="btn btn-secondary btn-sm" style={{ cursor: 'pointer' }}>
                     Upload Cover
-                    <input type="file" accept="image/*" onChange={handleCoverUpload} style={{ display: 'none' }} />
+                    <input type="file" accept="image/*" onChange={(e) => handleFileSelect(e, 'cover')} style={{ display: 'none' }} />
                   </label>
                 </div>
               </div>
@@ -161,6 +177,15 @@ export default function EditProfile() {
           </div>
         </div>
       </div>
+      {cropModalInfo.isOpen && (
+        <ImageCropperModal
+          imageSrc={cropModalInfo.src}
+          title={`Crop ${cropModalInfo.type === 'avatar' ? 'Avatar' : 'Cover Photo'}`}
+          aspect={cropModalInfo.type === 'avatar' ? 1 : 120 / 64}
+          onCropComplete={handleCropComplete}
+          onCancel={closeCropModal}
+        />
+      )}
     </div>
   );
 }
