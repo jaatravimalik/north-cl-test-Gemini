@@ -1,4 +1,7 @@
 import { NestFactory } from '@nestjs/core';
+import * as dns from 'dns';
+dns.setServers(['8.8.8.8']);
+
 import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
 import { join } from 'path';

@@ -27,6 +27,9 @@ const multerOptions = {
       cb(null, name);
     },
   }),
+  limits: {
+    fileSize: 500 * 1024, // 500 KB limit
+  },
 };
 
 @Controller('users')
