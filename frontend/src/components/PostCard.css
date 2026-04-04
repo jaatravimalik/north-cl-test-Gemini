@@ -1,63 +1,180 @@
+/* ── PostCard LinkedIn Style ── */
 .post-card {
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-md);
+  background: var(--white);
+  box-shadow: 0 0 0 1px rgba(0,0,0,.08), 0 2px 4px rgba(0,0,0,.06);
+  margin-bottom: 8px;
   transition: box-shadow 0.2s;
+  overflow: visible;
+}
+
+.post-card:hover {
+  box-shadow: 0 0 0 1px rgba(0,0,0,.12), 0 4px 12px rgba(0,0,0,.08);
+}
+
+/* Header */
+.post-header {
+  padding: 16px 16px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
 }
 
 .post-author {
   text-decoration: none;
   color: var(--navy);
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
+
+.post-author-info { display: flex; flex-direction: column; }
 
 .post-author-name {
-  font-weight: 600;
+  font-weight: 700;
   font-size: 0.95rem;
+  color: var(--navy);
+  line-height: 1.2;
+}
+.post-author-name:hover { text-decoration: underline; color: var(--saffron); }
+
+.post-author-meta {
+  font-size: 0.78rem;
+  color: var(--gray-500);
+  margin-top: 1px;
 }
 
-.post-image {
-  margin: 0 -24px;
+/* Post delete button */
+.post-delete-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-full);
+  border: none;
+  background: transparent;
+  color: var(--gray-400);
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  flex-shrink: 0;
 }
-.post-image img {
+.post-delete-btn:hover {
+  background: #FEF2F2;
+  color: var(--danger);
+}
+
+/* Content */
+.post-content-text {
+  padding: 12px 16px;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--navy);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* Post image */
+.post-image-block {
   width: 100%;
-  max-height: 500px;
-  object-fit: contain;
   background: var(--gray-50);
 }
+.post-image-block img {
+  width: 100%;
+  max-height: 520px;
+  object-fit: cover;
+  display: block;
+}
 
+/* Reaction/Stats bar */
+.post-stats-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 16px;
+  font-size: 0.82rem;
+  color: var(--gray-500);
+  border-bottom: 1px solid var(--gray-200);
+}
+
+.post-stat-likes { display: flex; align-items: center; gap: 4px; }
+.post-stat-likes .reaction-dot {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: var(--radius-full);
+  background: var(--saffron);
+  font-size: 10px;
+  color: white;
+}
+
+.post-stats-bar span { cursor: pointer; }
+.post-stats-bar span:hover { text-decoration: underline; color: var(--saffron); }
+
+/* Actions row */
 .post-actions {
-  border-top: 1px solid var(--gray-200);
+  display: flex;
+  padding: 4px 8px;
 }
 
 .post-action-btn {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 6px;
+  flex: 1;
+  padding: 10px 8px;
   background: none;
   border: none;
-  padding: 10px;
   font-family: var(--font-body);
+  font-size: 0.88rem;
   font-weight: 600;
   color: var(--gray-600);
   border-radius: var(--radius-sm);
   cursor: pointer;
-  transition: var(--transition-fast);
+  transition: background 0.15s, color 0.15s;
 }
+.post-action-btn:hover { background: var(--gray-100); color: var(--navy); }
+.post-action-btn.liked { color: var(--saffron); }
+.post-action-btn.liked .action-icon { transform: scale(1.2); }
+.action-icon { font-size: 1.15rem; transition: transform 0.15s; }
 
-.post-action-btn:hover {
-  background: var(--gray-100);
-}
-
-.post-action-btn.active {
-  color: var(--saffron);
-}
-
-.hover-saffron:hover {
-  color: var(--saffron);
-}
-
-.border-top {
+/* Comment section */
+.comment-section {
+  background: var(--gray-50);
   border-top: 1px solid var(--gray-200);
+  padding: 12px 16px 16px;
 }
 
-.pt-2 {
-  padding-top: 16px;
+.comment-item {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
 }
+
+.comment-bubble {
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: 0 12px 12px 12px;
+  padding: 10px 14px;
+  flex: 1;
+}
+
+.comment-author {
+  font-weight: 700;
+  font-size: 0.85rem;
+  margin-bottom: 2px;
+  color: var(--navy);
+}
+
+.comment-text {
+  font-size: 0.88rem;
+  color: var(--navy);
+}
+
+.hover-saffron:hover { color: var(--saffron); }
+.cursor-pointer { cursor: pointer; }

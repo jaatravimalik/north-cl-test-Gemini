@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import API from '../api/api';
 
 export default function PostComposer({ onPostCreated, user }) {
@@ -27,32 +28,54 @@ export default function PostComposer({ onPostCreated, user }) {
   };
 
   return (
-    <div className="card mb-3">
-      <div className="card-body">
-        <form onSubmit={handleSubmit}>
-          <div className="flex gap-2 mb-2">
+    <div className="card composer-linkedin bg-white slide-up">
+      <div className="composer-top">
+        <Link to={`/profile/${user?.id}`}>
+          {user?.avatar ? (
+            <img src={user.avatar} className="avatar avatar-sm" alt="User" />
+          ) : (
             <div className="avatar avatar-sm avatar-placeholder">
               {user?.name?.[0]?.toUpperCase() || 'U'}
             </div>
+          )}
+        </Link>
+        <div className="w-full">
+          <form onSubmit={handleSubmit}>
             <textarea
-              className="form-textarea"
-              placeholder="What's happening in your network?"
+              className="composer-textarea w-full"
+              placeholder="Start a post, try writing or sharing…"
               value={content}
               onChange={(e) => setContent(e.target.value)}
-              style={{ minHeight: '80px', marginBottom: 0 }}
+              rows={content ? 3 : 1}
+              style={{ width: '100%' }}
             />
-          </div>
-
-          <div className="flex justify-end items-center" style={{ marginLeft: '48px' }}>
-            <button
-              type="submit"
-              className="btn btn-primary btn-sm"
-              disabled={loading || !content.trim()}
-            >
-              {loading ? 'Posting...' : 'Post'}
-            </button>
-          </div>
-        </form>
+            {content.trim() && (
+              <div className="flex justify-end" style={{ marginTop: '8px', paddingRight: '0' }}>
+                <button type="submit" className="btn btn-primary btn-sm" disabled={loading}>
+                  {loading ? 'Posting...' : 'Post'}
+                </button>
+              </div>
+            )}
+          </form>
+        </div>
+      </div>
+      <div className="composer-actions">
+        <button className="action-btn disabled" title="Photo uploads currently disabled">
+          <span className="action-icon text-saffron" style={{ color: '#378fe9' }}>🖼️</span>
+          <span>Photo</span>
+        </button>
+        <button className="action-btn disabled" title="Video uploads currently disabled">
+          <span className="action-icon" style={{ color: '#5f9b41' }}>📹</span>
+          <span>Video</span>
+        </button>
+        <button className="action-btn disabled" title="Event creation currently disabled">
+          <span className="action-icon" style={{ color: '#c37d16' }}>📅</span>
+          <span>Event</span>
+        </button>
+        <button className="action-btn disabled" title="Article writing currently disabled">
+          <span className="action-icon" style={{ color: '#e16745' }}>📝</span>
+          <span>Write article</span>
+        </button>
       </div>
     </div>
   );
