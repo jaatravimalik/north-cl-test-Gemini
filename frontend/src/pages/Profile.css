@@ -1,64 +1,83 @@
 /* ═══════════════════════════════════════════════════════
-   Profile Page — LinkedIn Style
+   Profile Page — LinkedIn Style (Cover fixed)
    ═══════════════════════════════════════════════════════ */
 
 .profile-page {
   background: var(--gray-100);
   padding-top: 0;
+  padding-bottom: 40px;
 }
 
-/* ── Cover + Avatar block ── */
+/* ── Cover photo ── */
 .profile-cover-wrap {
-  position: relative;
   background: var(--white);
-  border: 1px solid var(--gray-200);
-  border-radius: var(--radius-md);
+  border-bottom: 1px solid var(--gray-200);
   margin-bottom: 8px;
   overflow: visible;
 }
 
-.profile-cover-img {
+/* The actual cover photo area — 220px like LinkedIn on desktop */
+.profile-cover-img-area {
   width: 100%;
-  height: 200px;
+  height: 220px;
+  position: relative;
+  overflow: hidden;
+  background: var(--gray-200);
+}
+
+.profile-cover-img-area img {
+  width: 100%;
+  height: 100%;
   object-fit: cover;
   display: block;
-  border-radius: var(--radius-md) var(--radius-md) 0 0;
 }
 
+/* Gradient placeholder that looks like LinkedIn's default blue/purple cover */
 .profile-cover-placeholder {
   width: 100%;
-  height: 200px;
-  background: linear-gradient(135deg, var(--saffron-light) 0%, var(--saffron) 60%, var(--saffron-dark) 100%);
-  border-radius: var(--radius-md) var(--radius-md) 0 0;
+  height: 220px;
+  background: linear-gradient(
+    120deg,
+    #0a66c2 0%,
+    #004182 35%,
+    #0f1c2e 70%,
+    #e55a0f 100%
+  );
+  display: block;
 }
 
+/* ── Identity block (below cover) ── */
 .profile-identity {
   padding: 0 24px 20px;
+  max-width: 1080px;
+  margin: 0 auto;
 }
 
 .profile-avatar-wrap {
-  margin-top: -48px;
+  margin-top: -56px;
   margin-bottom: 12px;
   position: relative;
   display: inline-block;
 }
 
 .profile-avatar-wrap .avatar {
-  width: 120px;
-  height: 120px;
+  width: 128px;
+  height: 128px;
   border: 4px solid var(--white);
   box-shadow: 0 2px 8px rgba(0,0,0,.15);
   background: var(--white);
-}
-
-.profile-avatar-wrap .avatar-placeholder {
-  font-size: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.8rem;
+  font-weight: 700;
 }
 
 .profile-name {
   font-size: 1.5rem;
   margin-bottom: 2px;
   color: var(--navy);
+  font-family: var(--font-display);
 }
 
 .profile-headline {
@@ -75,20 +94,20 @@
   margin-bottom: 6px;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
   flex-wrap: wrap;
 }
 
-.profile-location-row a {
-  color: var(--saffron);
-}
+.profile-location-row a { color: var(--saffron); }
 
 .profile-connections-row {
   font-size: 0.88rem;
   font-weight: 600;
   color: var(--saffron);
   margin-bottom: 16px;
+  cursor: pointer;
 }
+.profile-connections-row:hover { text-decoration: underline; }
 
 .profile-actions-row {
   display: flex;
@@ -153,7 +172,6 @@
   padding-bottom: 20px;
   position: relative;
 }
-
 .li-timeline-item:last-child { padding-bottom: 0; }
 
 .li-timeline-item::before {
@@ -181,51 +199,27 @@
 }
 
 .li-timeline-body { flex: 1; min-width: 0; }
+.li-timeline-title { font-size: 0.93rem; font-weight: 700; color: var(--navy); margin-bottom: 1px; }
+.li-timeline-subtitle { font-size: 0.85rem; font-weight: 600; color: var(--gray-600); margin-bottom: 1px; }
+.li-timeline-date { font-size: 0.78rem; color: var(--gray-500); margin-bottom: 6px; }
+.li-timeline-desc { font-size: 0.85rem; color: var(--gray-600); line-height: 1.5; }
 
-.li-timeline-title {
-  font-size: 0.93rem;
-  font-weight: 700;
-  color: var(--navy);
-  margin-bottom: 1px;
-}
-
-.li-timeline-subtitle {
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: var(--gray-600);
-  margin-bottom: 1px;
-}
-
-.li-timeline-date {
-  font-size: 0.78rem;
-  color: var(--gray-500);
-  margin-bottom: 6px;
-}
-
-.li-timeline-desc {
-  font-size: 0.85rem;
-  color: var(--gray-600);
-  line-height: 1.5;
-}
-
-/* Layout */
+/* ── Layout ── */
 .profile-layout {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 300px;
   gap: 8px;
   max-width: 1080px;
   margin: 0 auto;
-  padding: 16px 20px 40px;
+  padding: 0 20px 40px;
 }
 
 @media (max-width: 900px) {
-  .profile-layout {
-    grid-template-columns: 1fr;
-  }
+  .profile-layout { grid-template-columns: 1fr; }
   .profile-sidebar { order: -1; }
 }
 
-/* Sidebar card */
+/* Sidebar */
 .profile-sidebar-card {
   background: var(--white);
   border: 1px solid var(--gray-200);
@@ -234,19 +228,26 @@
   margin-bottom: 8px;
   font-size: 0.85rem;
 }
-
-.profile-sidebar-card h5 {
-  font-size: 0.9rem;
-  margin-bottom: 12px;
-  color: var(--navy);
-}
+.profile-sidebar-card h5 { font-size: 0.9rem; margin-bottom: 12px; color: var(--navy); }
 
 .sidebar-stat {
   display: flex;
   justify-content: space-between;
-  padding: 6px 0;
+  padding: 7px 0;
   border-bottom: 1px solid var(--gray-100);
   color: var(--gray-600);
+  font-size: 0.83rem;
 }
 .sidebar-stat:last-child { border-bottom: none; }
 .sidebar-stat strong { color: var(--navy); }
+
+/* Responsive cover */
+@media (max-width: 768px) {
+  .profile-cover-img-area { height: 140px; }
+  .profile-cover-placeholder { height: 140px; }
+  .profile-avatar-wrap { margin-top: -44px; }
+  .profile-avatar-wrap .avatar { width: 96px; height: 96px; font-size: 2rem; }
+  .profile-identity { padding: 0 16px 16px; }
+  .profile-layout { padding: 0 12px 24px; }
+  .profile-name { font-size: 1.25rem; }
+}

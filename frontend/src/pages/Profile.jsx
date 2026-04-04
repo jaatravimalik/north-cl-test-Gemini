@@ -61,74 +61,82 @@ export default function Profile() {
 
   return (
     <div className="profile-page page">
-      {/* ── Cover + Identity Block (full width) ── */}
-      <div className="container" style={{ maxWidth: 1080, margin: '0 auto', padding: '16px 20px 0' }}>
-        <div className="profile-cover-wrap fade-in">
-          {/* Cover image / gradient */}
-          <div className="profile-cover-placeholder" />
 
-          {/* Identity info */}
-          <div className="profile-identity">
-            {/* Avatar */}
-            <div className="profile-avatar-wrap">
-              {profile.avatar ? (
-                <img src={profile.avatar} alt={profile.name} className="avatar" />
-              ) : (
-                <div className="avatar avatar-placeholder">
-                  {profile.name?.[0]?.toUpperCase() || 'U'}
-                </div>
-              )}
-            </div>
+      {/* ── Cover photo + identity block ── */}
+      <div style={{ background: 'var(--white)', borderBottom: '1px solid var(--gray-200)', marginBottom: 8 }}>
+        {/* Cover photo */}
+        <div className="profile-cover-img-area">
+          {profile.cover ? (
+            <img src={profile.cover} alt="Cover" />
+          ) : (
+            <div className="profile-cover-placeholder" />
+          )}
+        </div>
 
-            {/* Name + headline */}
-            <h1 className="profile-name">{profile.name}</h1>
-            <p className="profile-headline">{profile.headline || 'Community Member'}</p>
+        {/* Identity */}
+        <div className="profile-identity">
+          {/* Avatar popping above cover */}
+          <div className="profile-avatar-wrap">
+            {profile.avatar ? (
+              <img src={profile.avatar} alt={profile.name} className="avatar" />
+            ) : (
+              <div className="avatar avatar-placeholder">
+                {profile.name?.[0]?.toUpperCase() || 'U'}
+              </div>
+            )}
+          </div>
 
-            {/* Location / website */}
-            <div className="profile-location-row">
-              {profile.location && <span>📍 {profile.location}</span>}
-              {profile.website && (
-                <a href={profile.website.startsWith('http') ? profile.website : `https://${profile.website}`}
-                  target="_blank" rel="noreferrer">
-                  🔗 {profile.website.replace(/https?:\/\//, '')}
-                </a>
-              )}
-            </div>
+          <h1 className="profile-name">{profile.name}</h1>
+          <p className="profile-headline">{profile.headline || 'Community Member'}</p>
 
-            {/* Connection count */}
-            <div className="profile-connections-row">
-              <span>{followerCount} follower{followerCount !== 1 ? 's' : ''}</span>
-              {' · '}
-              <span>{followingCount} following</span>
-            </div>
+          <div className="profile-location-row">
+            {(profile.city || profile.state || profile.location) && (
+              <span>
+                📍 {[profile.city, profile.state, profile.location].filter(Boolean).join(', ')}
+              </span>
+            )}
+            {profile.website && (
+              <a
+                href={profile.website.startsWith('http') ? profile.website : `https://${profile.website}`}
+                target="_blank"
+                rel="noreferrer"
+              >
+                🔗 {profile.website.replace(/https?:\/\//, '')}
+              </a>
+            )}
+          </div>
 
-            {/* Action buttons */}
-            <div className="profile-actions-row">
-              {isOwner ? (
-                <Link to="/profile/edit" className="btn btn-outline btn-sm" id="edit-profile-btn">
-                  ✏️ Edit Profile
-                </Link>
-              ) : currentUser ? (
-                <>
-                  <button
-                    id="follow-btn"
-                    className={`btn ${isFollowing ? 'btn-secondary' : 'btn-primary'} btn-sm`}
-                    onClick={isFollowing ? handleUnfollow : handleFollow}
-                    disabled={followLoading}
-                  >
-                    {followLoading ? '...' : isFollowing ? '✓ Following' : '+ Follow'}
-                  </button>
-                  <button className="btn btn-outline btn-sm">💬 Message</button>
-                </>
-              ) : null}
-            </div>
+          <div className="profile-connections-row">
+            <span>{followerCount} follower{followerCount !== 1 ? 's' : ''}</span>
+            {' · '}
+            <span>{followingCount} following</span>
+          </div>
+
+          <div className="profile-actions-row">
+            {isOwner ? (
+              <Link to="/profile/edit" className="btn btn-outline btn-sm" id="edit-profile-btn">
+                ✏️ Edit Profile
+              </Link>
+            ) : currentUser ? (
+              <>
+                <button
+                  id="follow-btn"
+                  className={`btn ${isFollowing ? 'btn-secondary' : 'btn-primary'} btn-sm`}
+                  onClick={isFollowing ? handleUnfollow : handleFollow}
+                  disabled={followLoading}
+                >
+                  {followLoading ? '…' : isFollowing ? '✓ Following' : '+ Follow'}
+                </button>
+                <button className="btn btn-outline btn-sm">💬 Message</button>
+              </>
+            ) : null}
           </div>
         </div>
       </div>
 
       {/* ── Main 2-column layout ── */}
       <div className="profile-layout">
-        {/* Left: Main sections */}
+        {/* Left: Main content */}
         <div className="profile-main">
 
           {/* About */}
@@ -153,9 +161,7 @@ export default function Profile() {
                       <div className="li-timeline-date">
                         {exp.startDate} – {exp.current ? 'Present' : exp.endDate}
                       </div>
-                      {exp.description && (
-                        <p className="li-timeline-desc">{exp.description}</p>
-                      )}
+                      {exp.description && <p className="li-timeline-desc">{exp.description}</p>}
                     </div>
                   </li>
                 ))}
@@ -177,9 +183,7 @@ export default function Profile() {
                       <div className="li-timeline-title">{edu.degree}</div>
                       <div className="li-timeline-subtitle">{edu.institution}</div>
                       <div className="li-timeline-date">Class of {edu.year}</div>
-                      {edu.description && (
-                        <p className="li-timeline-desc">{edu.description}</p>
-                      )}
+                      {edu.description && <p className="li-timeline-desc">{edu.description}</p>}
                     </div>
                   </li>
                 ))}
@@ -204,6 +208,7 @@ export default function Profile() {
 
         {/* Right: Sidebar */}
         <div className="profile-sidebar">
+          {/* Public stats */}
           <div className="profile-sidebar-card slide-up">
             <h5>Profile Overview</h5>
             <div className="sidebar-stat">
@@ -228,10 +233,10 @@ export default function Profile() {
             )}
           </div>
 
-          {/* Contact info if owner */}
+          {/* ⚠️ Contact info — OWNER ONLY, never shown to public */}
           {isOwner && (
             <div className="profile-sidebar-card slide-up" style={{ animationDelay: '0.1s' }}>
-              <h5>Contact Info</h5>
+              <h5>🔒 Your Contact Info <span style={{ fontSize: '0.7rem', color: 'var(--gray-400)', fontWeight: 400 }}>(only you can see this)</span></h5>
               {profile.email && (
                 <div className="sidebar-stat">
                   <span>Email</span>
