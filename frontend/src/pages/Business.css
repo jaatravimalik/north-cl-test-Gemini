@@ -1,0 +1,423 @@
+/* ═══════════════════════════════════════════════════════
+   Business Pages — Google Business Profile Style
+   ═══════════════════════════════════════════════════════ */
+
+/* ── Directory Page ── */
+.biz-dir-hero {
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+  padding: 40px 24px;
+  text-align: center;
+  color: white;
+  margin-bottom: 0;
+}
+
+.biz-dir-hero h1 {
+  color: white;
+  font-size: 2rem;
+  margin-bottom: 8px;
+}
+
+.biz-dir-hero p {
+  color: var(--gray-300);
+  font-size: 1rem;
+  margin-bottom: 24px;
+}
+
+.biz-search-bar {
+  display: flex;
+  max-width: 700px;
+  margin: 0 auto;
+  gap: 0;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: var(--shadow-xl);
+}
+
+.biz-search-input {
+  flex: 1;
+  border: none;
+  padding: 14px 20px;
+  font-family: var(--font-body);
+  font-size: 1rem;
+  color: var(--navy);
+  background: white;
+  outline: none;
+}
+
+.biz-search-btn {
+  padding: 14px 24px;
+  background: var(--saffron);
+  color: white;
+  border: none;
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s;
+  white-space: nowrap;
+}
+.biz-search-btn:hover { background: var(--saffron-dark); }
+
+/* Category filter chips */
+.industry-filters {
+  display: flex;
+  overflow-x: auto;
+  gap: 8px;
+  padding: 16px 24px;
+  background: var(--white);
+  border-bottom: 1px solid var(--gray-200);
+  scrollbar-width: none;
+}
+.industry-filters::-webkit-scrollbar { display: none; }
+
+.industry-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: var(--radius-full);
+  border: 1.5px solid var(--gray-200);
+  background: var(--white);
+  color: var(--gray-600);
+  font-weight: 600;
+  font-size: 0.82rem;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: var(--font-body);
+}
+
+.industry-chip:hover {
+  border-color: var(--saffron);
+  color: var(--saffron);
+  background: var(--saffron-glow);
+}
+
+.industry-chip.active {
+  background: var(--navy);
+  color: var(--white);
+  border-color: var(--navy);
+}
+
+/* ── GMB-style Business Card ── */
+.gmb-card {
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: box-shadow 0.2s, transform 0.2s;
+  text-decoration: none;
+  color: inherit;
+  height: 100%;
+}
+
+.gmb-card:hover {
+  box-shadow: 0 4px 20px rgba(0,0,0,.12);
+  transform: translateY(-2px);
+}
+
+.gmb-card-thumb {
+  width: 100%;
+  height: 155px;
+  object-fit: cover;
+  display: block;
+}
+
+.gmb-card-body {
+  padding: 14px 16px 16px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.gmb-card-name {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--navy);
+  margin-bottom: 4px;
+  font-family: var(--font-body);
+}
+
+.gmb-card-cat {
+  font-size: 0.78rem;
+  color: var(--gray-500);
+  margin-bottom: 6px;
+}
+
+.gmb-card-rating {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 8px;
+  font-size: 0.82rem;
+}
+
+.gmb-stars {
+  color: #FBBC04; /* Google's star yellow */
+  font-size: 0.82rem;
+  letter-spacing: 1px;
+}
+
+.gmb-card-location {
+  font-size: 0.78rem;
+  color: var(--gray-500);
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* ── Business Detail (GMB style) ── */
+.biz-detail-page {
+  background: var(--gray-100);
+}
+
+.biz-photo-gallery {
+  width: 100%;
+  height: 340px;
+  position: relative;
+  background: var(--gray-200);
+  overflow: hidden;
+}
+
+.biz-photo-main {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.biz-photo-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(15,28,46,0.4) 0%, transparent 50%);
+}
+
+.biz-detail-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  gap: 16px;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 16px 20px 40px;
+}
+
+@media (max-width: 900px) {
+  .biz-detail-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Left column sections */
+.biz-section {
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-md);
+  padding: 20px 24px;
+  margin-bottom: 12px;
+}
+
+.biz-section-title {
+  font-size: 1.1rem;
+  font-family: var(--font-display);
+  color: var(--navy);
+  margin-bottom: 14px;
+}
+
+/* Overall rating display */
+.biz-rating-showcase {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.biz-rating-number {
+  font-size: 3.5rem;
+  font-weight: 700;
+  color: var(--navy);
+  line-height: 1;
+  font-family: var(--font-body);
+}
+
+.biz-rating-details { flex: 1; }
+
+.biz-big-stars {
+  color: #FBBC04;
+  font-size: 1.3rem;
+  letter-spacing: 2px;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.biz-review-count {
+  font-size: 0.85rem;
+  color: var(--gray-500);
+}
+
+/* Rating bars */
+.rating-bars { margin-top: 12px; }
+.rating-bar-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+  font-size: 0.78rem;
+  color: var(--gray-600);
+}
+.rating-bar-track {
+  flex: 1;
+  height: 8px;
+  background: var(--gray-200);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.rating-bar-fill {
+  height: 100%;
+  background: #FBBC04;
+  border-radius: 4px;
+}
+
+/* Right sidebar */
+.biz-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.biz-info-card {
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-md);
+  padding: 20px;
+}
+
+.biz-info-row {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--gray-100);
+  font-size: 0.88rem;
+}
+.biz-info-row:last-child { border-bottom: none; }
+
+.biz-info-icon {
+  font-size: 1.1rem;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.biz-info-label {
+  font-size: 0.72rem;
+  color: var(--gray-500);
+  margin-bottom: 1px;
+}
+
+.biz-info-value {
+  font-weight: 600;
+  color: var(--navy);
+  font-size: 0.88rem;
+}
+
+/* GMB-style action buttons */
+.biz-actions-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 16px 0;
+}
+
+.biz-action-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border-radius: var(--radius-full);
+  border: 1.5px solid var(--gray-300);
+  background: var(--white);
+  font-family: var(--font-body);
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--navy);
+  cursor: pointer;
+  transition: all 0.15s;
+  text-decoration: none;
+}
+.biz-action-pill:hover {
+  border-color: var(--saffron);
+  color: var(--saffron);
+  background: var(--saffron-glow);
+}
+.biz-action-pill.primary {
+  background: var(--saffron);
+  color: white;
+  border-color: var(--saffron);
+}
+.biz-action-pill.primary:hover {
+  background: var(--saffron-dark);
+  border-color: var(--saffron-dark);
+  color: white;
+}
+
+/* Review card */
+.gmb-review-card {
+  padding: 16px 0;
+  border-bottom: 1px solid var(--gray-100);
+}
+.gmb-review-card:last-child { border-bottom: none; }
+
+.gmb-reviewer-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.gmb-reviewer-name { font-weight: 700; font-size: 0.9rem; }
+.gmb-review-date { font-size: 0.75rem; color: var(--gray-500); }
+
+.gmb-review-stars { color: #FBBC04; font-size: 0.85rem; }
+.gmb-review-text { font-size: 0.88rem; color: var(--navy); line-height: 1.5; }
+
+/* "Listed by" badge */
+.listed-by-card {
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  text-align: center;
+}
+
+.listed-by-card .avatar {
+  width: 52px;
+  height: 52px;
+  margin: 0 auto 8px;
+}
+
+/* Write review form */
+.review-form-card {
+  background: var(--gray-50);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-md);
+  padding: 16px 20px;
+  margin-bottom: 16px;
+}
+
+.star-picker {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 12px;
+}
+
+.star-picker button {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  opacity: 0.4;
+  transition: opacity 0.1s, transform 0.1s;
+  padding: 0;
+}
+.star-picker button.active { opacity: 1; transform: scale(1.1); }
+.star-picker button:hover { opacity: 1; }
