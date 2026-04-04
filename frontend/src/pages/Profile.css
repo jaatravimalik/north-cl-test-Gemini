@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════
-   Profile Page — LinkedIn Style (Cover fixed)
+   Profile Page — LinkedIn Style (Cover 1584×396 fixed)
    ═══════════════════════════════════════════════════════ */
 
 .profile-page {
@@ -8,34 +8,30 @@
   padding-bottom: 40px;
 }
 
-/* ── Cover photo ── */
-.profile-cover-wrap {
-  background: var(--white);
-  border-bottom: 1px solid var(--gray-200);
-  margin-bottom: 8px;
-  overflow: visible;
-}
-
-/* The actual cover photo area — 220px like LinkedIn on desktop */
+/* ── Cover photo — 1584×396 = 4:1 ratio ── */
+/* padding-top: 25% trick = 396/1584 = 25%, so cover is ALWAYS correct ratio */
 .profile-cover-img-area {
   width: 100%;
-  height: 220px;
+  padding-top: 25%;        /* 396 / 1584 = 0.25 → maintains 1584×396 at any width */
   position: relative;
   overflow: hidden;
-  background: var(--gray-200);
+  background: #1d2226;
+  max-height: 396px;       /* cap at LinkedIn's true desktop size */
 }
 
 .profile-cover-img-area img {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
 }
 
-/* Gradient placeholder that looks like LinkedIn's default blue/purple cover */
+/* Gradient placeholder shown when user has no cover photo */
 .profile-cover-placeholder {
-  width: 100%;
-  height: 220px;
+  position: absolute;
+  inset: 0;
   background: linear-gradient(
     120deg,
     #0a66c2 0%,
@@ -43,7 +39,6 @@
     #0f1c2e 70%,
     #e55a0f 100%
   );
-  display: block;
 }
 
 /* ── Identity block (below cover) ── */
@@ -58,6 +53,7 @@
   margin-bottom: 12px;
   position: relative;
   display: inline-block;
+  z-index: 2;
 }
 
 .profile-avatar-wrap .avatar {
@@ -97,7 +93,6 @@
   gap: 12px;
   flex-wrap: wrap;
 }
-
 .profile-location-row a { color: var(--saffron); }
 
 .profile-connections-row {
@@ -241,10 +236,8 @@
 .sidebar-stat:last-child { border-bottom: none; }
 .sidebar-stat strong { color: var(--navy); }
 
-/* Responsive cover */
+/* Responsive — ratio auto-maintained by padding-top: 25% */
 @media (max-width: 768px) {
-  .profile-cover-img-area { height: 140px; }
-  .profile-cover-placeholder { height: 140px; }
   .profile-avatar-wrap { margin-top: -44px; }
   .profile-avatar-wrap .avatar { width: 96px; height: 96px; font-size: 2rem; }
   .profile-identity { padding: 0 16px 16px; }

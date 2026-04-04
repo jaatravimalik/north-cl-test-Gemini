@@ -5,23 +5,23 @@ import API from '../api/api';
 export default function PostComposer({ onPostCreated, user }) {
   const [content, setContent] = useState('');
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!content.trim()) return;
+    const trimmed = content.trim();
+    if (!trimmed) return;
     setLoading(true);
-
-    const formData = new FormData();
-    formData.append('content', content);
+    setError('');
 
     try {
-      const { data } = await API.post('/posts', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      });
+      // Backend uses @Body('content') — must send JSON, NOT FormData
+      const { data } = await API.post('/posts', { content: trimmed });
       setContent('');
       if (onPostCreated) onPostCreated(data);
     } catch (err) {
       console.error('Failed to create post', err);
+      setError(err?.response?.data?.message || 'Failed to post. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -45,14 +45,28 @@ export default function PostComposer({ onPostCreated, user }) {
               className="composer-textarea w-full"
               placeholder="Start a post, try writing or sharing…"
               value={content}
-              onChange={(e) => setContent(e.target.value)}
-              rows={content ? 3 : 1}
+              onChange={(e) => { setContent(e.target.value); if (error) setError(''); }}
+              rows={content ? 4 : 1}
               style={{ width: '100%' }}
+              id="post-composer-textarea"
             />
+            {error && (
+              <div style={{ color: 'var(--danger)', fontSize: '0.82rem', marginTop: 4 }}>
+                ⚠️ {error}
+              </div>
+            )}
             {content.trim() && (
-              <div className="flex justify-end" style={{ marginTop: '8px', paddingRight: '0' }}>
-                <button type="submit" className="btn btn-primary btn-sm" disabled={loading}>
-                  {loading ? 'Posting...' : 'Post'}
+              <div className="flex justify-end items-center" style={{ marginTop: '8px', gap: 8 }}>
+                <span style={{ fontSize: '0.75rem', color: content.length > 2800 ? 'var(--danger)' : 'var(--gray-400)' }}>
+                  {content.length}/3000
+                </span>
+                <button
+                  type="submit"
+                  className="btn btn-primary btn-sm"
+                  disabled={loading || content.trim().length === 0}
+                  id="post-submit-btn"
+                >
+                  {loading ? 'Posting…' : 'Post'}
                 </button>
               </div>
             )}

@@ -106,8 +106,11 @@ export default function EditProfile() {
             )}
 
             <div className="mb-4 flex gap-3 flex-wrap">
+              {/* Avatar Upload */}
               <div>
-                <label className="block text-sm font-semibold mb-1">Avatar</label>
+                <label className="block text-sm font-semibold mb-1">
+                  Profile Photo <span style={{ color: 'var(--gray-400)', fontWeight: 400 }}>(max 500KB)</span>
+                </label>
                 <div className="flex items-center gap-2">
                   {user?.avatar ? (
                     <img src={user.avatar} alt="" className="avatar avatar-lg" />
@@ -115,23 +118,58 @@ export default function EditProfile() {
                     <div className="avatar avatar-lg avatar-placeholder">{user?.name?.[0]}</div>
                   )}
                   <label className="btn btn-secondary btn-sm" style={{ cursor: 'pointer' }}>
-                    Upload Avatar
-                    <input type="file" accept="image/*" onChange={(e) => handleFileSelect(e, 'avatar')} style={{ display: 'none' }} />
+                    Upload Photo
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => handleFileSelect(e, 'avatar')}
+                      style={{ display: 'none' }}
+                    />
                   </label>
                 </div>
               </div>
 
-              <div>
-                <label className="block text-sm font-semibold mb-1">Cover Photo</label>
-                <div className="flex items-center gap-2">
-                  <div style={{ width: '120px', height: '64px', background: 'var(--gray-200)', borderRadius: '8px', overflow: 'hidden' }}>
-                    {user?.cover ? <img src={user.cover} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : null}
-                  </div>
-                  <label className="btn btn-secondary btn-sm" style={{ cursor: 'pointer' }}>
-                    Upload Cover
-                    <input type="file" accept="image/*" onChange={(e) => handleFileSelect(e, 'cover')} style={{ display: 'none' }} />
-                  </label>
+              {/* Cover Photo Upload — 1584×396 = 4:1 */}
+              <div style={{ flex: 1, minWidth: 260 }}>
+                <label className="block text-sm font-semibold mb-1">
+                  Cover Photo <span style={{ color: 'var(--gray-400)', fontWeight: 400 }}>(1584×396 · max 500KB)</span>
+                </label>
+                {/* Preview maintains 4:1 aspect ratio */}
+                <div style={{
+                  width: '100%',
+                  paddingTop: '25%',           /* 396/1584 = 25% → always 4:1 */
+                  position: 'relative',
+                  background: user?.cover ? 'transparent' : 'var(--gray-200)',
+                  borderRadius: 8,
+                  overflow: 'hidden',
+                  marginBottom: 8,
+                  border: '2px dashed var(--gray-300)',
+                }}>
+                  {user?.cover ? (
+                    <img
+                      src={user.cover}
+                      alt="Cover"
+                      style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}
+                    />
+                  ) : (
+                    <div style={{
+                      position: 'absolute', inset: 0, display: 'flex',
+                      alignItems: 'center', justifyContent: 'center',
+                      color: 'var(--gray-400)', fontSize: '0.82rem', textAlign: 'center',
+                    }}>
+                      1584 × 396 px
+                    </div>
+                  )}
                 </div>
+                <label className="btn btn-secondary btn-sm" style={{ cursor: 'pointer' }}>
+                  Upload Cover Photo
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => handleFileSelect(e, 'cover')}
+                    style={{ display: 'none' }}
+                  />
+                </label>
               </div>
             </div>
 
@@ -181,7 +219,7 @@ export default function EditProfile() {
         <ImageCropperModal
           imageSrc={cropModalInfo.src}
           title={`Crop ${cropModalInfo.type === 'avatar' ? 'Avatar' : 'Cover Photo'}`}
-          aspect={cropModalInfo.type === 'avatar' ? 1 : 120 / 64}
+          aspect={cropModalInfo.type === 'avatar' ? 1 : 1584 / 396}
           onCropComplete={handleCropComplete}
           onCancel={closeCropModal}
         />

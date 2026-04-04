@@ -37,9 +37,13 @@
   top: 88px;
 }
 
+/* Cover: 1584×396 = 4:1 ratio. Sidebar card is ~225px wide → height = 225/4 ≈ 56px */
 .profile-cover {
   height: 56px;
   background: linear-gradient(135deg, var(--saffron-light) 0%, var(--saffron) 60%, var(--saffron-dark) 100%);
+  background-size: cover;
+  background-position: center;
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
 }
 
 .profile-summary-info {

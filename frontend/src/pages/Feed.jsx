@@ -53,7 +53,14 @@ export default function Feed() {
           {/* Left Sidebar */}
           <div className="feed-left">
             <div className="card profile-summary-card">
-              <div className="profile-cover"></div>
+              {/* Cover photo — 1584×396 aspect ratio hero */}
+              <div
+                className="profile-cover"
+                style={user?.cover
+                  ? { backgroundImage: `url(${user.cover})`, backgroundSize: 'cover', backgroundPosition: 'center' }
+                  : undefined
+                }
+              />
               <div className="profile-summary-info">
                 <Link to={`/profile/${user?.id}`}>
                   {user?.avatar ? (
@@ -64,18 +71,18 @@ export default function Feed() {
                     </div>
                   )}
                 </Link>
-                <Link to={`/profile/${user?.id}`}>
+                <Link to={`/profile/${user?.id}`} style={{ textDecoration: 'none' }}>
                   <h4>{user?.name}</h4>
                 </Link>
                 <p>{user?.headline || 'Community Member'}</p>
               </div>
               <div className="profile-stats">
                 <div className="profile-stat-item">
-                  <span>Connections</span>
-                  <span className="stat-value">{user?.followedBy?.length || 0}</span>
+                  <span className="stat-label">Followers</span>
+                  <span className="stat-value">{user?.followedBy?.length || user?.followers?.length || 0}</span>
                 </div>
                 <div className="profile-stat-item">
-                  <span>Following</span>
+                  <span className="stat-label">Following</span>
                   <span className="stat-value">{user?.following?.length || 0}</span>
                 </div>
               </div>
