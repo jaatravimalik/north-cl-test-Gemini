@@ -63,6 +63,9 @@ export default function Navbar() {
                   <Link to="/businesses/new" className="dropdown-item" onClick={() => setDropdownOpen(false)}>
                     🏢 List Business
                   </Link>
+                  <Link to="/businesses/my" className="dropdown-item" onClick={() => setDropdownOpen(false)} id="my-listings-nav">
+                    📋 My Listings
+                  </Link>
                   <hr className="dropdown-divider" />
                   <button className="dropdown-item dropdown-logout" onClick={handleLogout}>
                     🚪 Logout

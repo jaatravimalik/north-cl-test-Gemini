@@ -10,12 +10,22 @@ export default function Profile() {
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [followLoading, setFollowLoading] = useState(false);
+  const [businesses, setBusinesses] = useState([]);
 
   useEffect(() => {
     API.get(`/users/${userId}`)
       .then(({ data }) => setProfile(data))
       .catch(console.error)
       .finally(() => setLoading(false));
+
+    // Fetch this user's businesses for the profile page
+    API.get(`/businesses?ownerId=${userId}`)
+      .then(({ data }) => {
+        // filter by ownerId client-side since backend filters by name/category
+        const owned = Array.isArray(data) ? data.filter(b => b.ownerId === userId || b.owner?.id === userId) : [];
+        setBusinesses(owned);
+      })
+      .catch(() => setBusinesses([]));
   }, [userId]);
 
   if (loading) return <div className="loading-page"><div className="spinner"></div></div>;
@@ -200,6 +210,51 @@ export default function Profile() {
               <div className="skills-grid">
                 {profile.skills.map((skill, i) => (
                   <span key={i} className="skill-badge">{skill}</span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Business Listings — shown on public profile as small icons */}
+          {businesses.length > 0 && (
+            <div className="profile-section slide-up" style={{ animationDelay: '0.4s' }}>
+              <h3 className="profile-section-title">Business Listings</h3>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
+                {businesses.map((biz) => (
+                  <Link
+                    key={biz.id}
+                    to={`/businesses/${biz.id}`}
+                    title={biz.name}
+                    style={{
+                      display: 'flex', flexDirection: 'column', alignItems: 'center',
+                      gap: 6, textDecoration: 'none', width: 80,
+                    }}
+                  >
+                    {/* Square logo icon */}
+                    <div style={{
+                      width: 60, height: 60, borderRadius: 12,
+                      border: '1px solid var(--gray-200)',
+                      overflow: 'hidden', background: 'var(--gray-50)',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      fontSize: '1.5rem', flexShrink: 0,
+                      transition: 'box-shadow 0.15s',
+                    }}
+                    onMouseEnter={e => e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.12)'}
+                    onMouseLeave={e => e.currentTarget.style.boxShadow = 'none'}
+                    >
+                      {biz.imageUrl
+                        ? <img src={biz.imageUrl} alt={biz.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        : <span>🏢</span>
+                      }
+                    </div>
+                    <span style={{
+                      fontSize: '0.72rem', color: 'var(--navy)', fontWeight: 600,
+                      textAlign: 'center', lineHeight: 1.2,
+                      display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden',
+                    }}>
+                      {biz.name}
+                    </span>
+                  </Link>
                 ))}
               </div>
             </div>

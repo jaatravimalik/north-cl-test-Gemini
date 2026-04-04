@@ -1,5 +1,5 @@
 import {
-  Controller, Get, Post, Param, Query, Body, UseGuards, Request,
+  Controller, Get, Post, Put, Param, Query, Body, UseGuards, Request,
   UseInterceptors, UploadedFile,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -28,6 +28,13 @@ export class BusinessController {
     return this.bizService.findAll(q, category);
   }
 
+  /** Owner's own business listings */
+  @UseGuards(JwtAuthGuard)
+  @Get('my')
+  getMyListings(@Request() req) {
+    return this.bizService.findByOwner(req.user.id);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.bizService.findById(id);
@@ -43,5 +50,29 @@ export class BusinessController {
   ) {
     const imageUrl = file ? `/uploads/${file.filename}` : undefined;
     return this.bizService.create(req.user.id, dto, imageUrl);
+  }
+
+  /** Edit business listing — owner only */
+  @UseGuards(JwtAuthGuard)
+  @Put(':id')
+  update(
+    @Request() req,
+    @Param('id') id: string,
+    @Body() dto: Partial<CreateBusinessDto>,
+  ) {
+    return this.bizService.update(req.user.id, id, dto);
+  }
+
+  /** Upload/replace business logo — owner only */
+  @UseGuards(JwtAuthGuard)
+  @Post(':id/logo')
+  @UseInterceptors(FileInterceptor('logo', multerOptions))
+  uploadLogo(
+    @Request() req,
+    @Param('id') id: string,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    const imageUrl = `/uploads/${file.filename}`;
+    return this.bizService.updateLogo(req.user.id, id, imageUrl);
   }
 }

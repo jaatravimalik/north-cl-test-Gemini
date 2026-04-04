@@ -82,12 +82,63 @@ export default function BusinessDetail() {
     return { n, pct };
   });
 
+  const isOwner = user?.id === biz.ownerId;
+
   return (
     <div className="biz-detail-page" style={{ minHeight: '100vh' }}>
-      {/* Photo */}
-      <div className="biz-photo-gallery">
-        <img src={biz.imageUrl || defaultImage} alt={biz.name} className="biz-photo-main" />
-        <div className="biz-photo-overlay" />
+
+      {/* ── Business Name Banner (no cover image) ── */}
+      <div style={{
+        background: 'linear-gradient(135deg, var(--navy) 0%, #1a3a5c 100%)',
+        padding: '40px 24px 0',
+        position: 'relative',
+        overflow: 'visible',
+      }}>
+        <div style={{ maxWidth: 1100, margin: '0 auto', display: 'flex', alignItems: 'flex-end', gap: 20, paddingBottom: 0 }}>
+          {/* Square Logo */}
+          <div style={{
+            width: 100, height: 100,
+            borderRadius: 16,
+            border: '4px solid white',
+            overflow: 'hidden',
+            background: 'white',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontSize: '2.5rem',
+            flexShrink: 0,
+            marginBottom: -20,
+            boxShadow: '0 4px 16px rgba(0,0,0,0.2)',
+          }}>
+            {biz.imageUrl ? (
+              <img src={biz.imageUrl} alt={biz.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            ) : (
+              <span>🏢</span>
+            )}
+          </div>
+          {/* Business name in the banner */}
+          <div style={{ paddingBottom: 24, flex: 1 }}>
+            <span style={{
+              background: 'rgba(255,255,255,0.15)', color: 'white',
+              padding: '2px 12px', borderRadius: 20, fontSize: '0.75rem',
+              marginBottom: 6, display: 'inline-block',
+            }}>
+              {biz.category}
+            </span>
+            <h1 style={{ color: 'white', fontSize: '1.8rem', margin: '4px 0 0' }}>{biz.name}</h1>
+          </div>
+          {/* Edit button — owner only */}
+          {isOwner && (
+            <div style={{ paddingBottom: 24, flexShrink: 0 }}>
+              <Link
+                to={`/businesses/${biz.id}/edit`}
+                className="btn btn-secondary btn-sm"
+                id="edit-biz-btn"
+                style={{ background: 'rgba(255,255,255,0.15)', color: 'white', border: '1px solid rgba(255,255,255,0.3)' }}
+              >
+                ✏️ Edit Listing
+              </Link>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Main layout */}
@@ -96,14 +147,8 @@ export default function BusinessDetail() {
         {/* ── Left column ── */}
         <div className="biz-main">
 
-          {/* Business identity */}
-          <div className="biz-section slide-up">
-            <span style={{ fontSize: '0.78rem', background: 'var(--navy)', color: 'white',
-              padding: '3px 10px', borderRadius: 20, marginBottom: 10, display: 'inline-block' }}>
-              {biz.category}
-            </span>
-            <h1 style={{ fontSize: '1.8rem', marginBottom: 4 }}>{biz.name}</h1>
-
+          {/* Actions + rating card */}
+          <div className="biz-section slide-up" style={{ marginTop: 28 }}>
             {/* Compact rating row */}
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
               <span style={{ fontWeight: 700, fontSize: '1rem' }}>{avgRating.toFixed(1)}</span>
